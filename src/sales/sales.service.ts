@@ -5,11 +5,16 @@ import {
 } from '@nestjs/common';
 import { CreateSaleDto } from './sale.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 
+@ApiTags('Sales') // Tag for the Sale endpoints
 @Injectable()
 export class SaleService {
   constructor(private readonly prisma: PrismaService) {}
 
+  @ApiOperation({ summary: 'Get all sales with optional filters' })
+  @ApiResponse({ status: 200, description: 'List of sales' })
+  @ApiResponse({ status: 404, description: 'No sales found' })
   async getAll(productId?: string, startDate?: Date, endDate?: Date) {
     return this.prisma.sale.findMany({
       where: {
@@ -22,6 +27,11 @@ export class SaleService {
     });
   }
 
+  @ApiOperation({ summary: 'Create a new sale' })
+  @ApiResponse({ status: 201, description: 'Sale successfully created' })
+  @ApiResponse({ status: 404, description: 'Product not found' })
+  @ApiResponse({ status: 400, description: 'Not enough stock available' })
+  @ApiBody({ type: CreateSaleDto })
   async create(data: CreateSaleDto) {
     const product = await this.prisma.product.findUnique({
       where: { id: data.productId },
@@ -52,6 +62,9 @@ export class SaleService {
     return sale;
   }
 
+  @ApiOperation({ summary: 'Delete a sale' })
+  @ApiResponse({ status: 200, description: 'Sale successfully deleted' })
+  @ApiResponse({ status: 404, description: 'Sale not found' })
   async delete(id: string) {
     const sale = await this.prisma.sale.findUnique({ where: { id } });
     if (!sale) {
