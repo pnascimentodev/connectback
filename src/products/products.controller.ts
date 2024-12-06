@@ -20,7 +20,7 @@ import {
 import { CreateProductDto, UpdateProductDto } from './dto/product.dto';
 import { ProductService } from './products.service';
 
-@ApiTags('Products') // Tag for the Product endpoints
+@ApiTags('Products')
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}

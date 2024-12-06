@@ -7,7 +7,7 @@ import { CreateSaleDto } from './sale.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 
-@ApiTags('Sales') // Tag for the Sale endpoints
+@ApiTags('Sales')
 @Injectable()
 export class SaleService {
   constructor(private readonly prisma: PrismaService) {}

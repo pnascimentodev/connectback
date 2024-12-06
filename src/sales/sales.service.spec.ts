@@ -1,12 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SaleService } from './sales.service';
-import { PrismaService } from '../prisma/prisma.service'; // Importando o PrismaService
+import { PrismaService } from '../prisma/prisma.service';
 
-// Mock do PrismaService
+// Mock implementation of PrismaService for testing purposes
 const prismaServiceMock = {
   sale: {
     findMany: jest.fn().mockResolvedValue([]),
     create: jest.fn().mockResolvedValue({
+      // Mock the create method
       id: '1',
       productId: 'product-id',
       quantity: 1,
@@ -14,6 +15,7 @@ const prismaServiceMock = {
       saleDate: new Date(),
     }),
     findUnique: jest.fn().mockResolvedValue({
+      // Mock the findUnique method
       id: '1',
       productId: 'product-id',
       quantity: 1,
@@ -21,16 +23,19 @@ const prismaServiceMock = {
       saleDate: new Date(),
     }),
     delete: jest.fn().mockResolvedValue({
+      // Mock the delete method
       id: '1',
     }),
   },
   product: {
     findUnique: jest.fn().mockResolvedValue({
+      // Mock the findUnique method
       id: 'product-id',
       price: 100,
       stock: 10,
     }),
     update: jest.fn().mockResolvedValue({
+      // Mock the update method
       id: 'product-id',
       stock: 9,
     }),
@@ -44,7 +49,7 @@ describe('SalesService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SaleService,
-        { provide: PrismaService, useValue: prismaServiceMock }, // Fornecendo o mock do PrismaService
+        { provide: PrismaService, useValue: prismaServiceMock },
       ],
     }).compile();
 
@@ -55,23 +60,32 @@ describe('SalesService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should return all sales', async () => {
+  it('should return an empty list of sales', async () => {
+    // Clarify expectation
     const sales = await service.getAll();
-    expect(sales).toEqual([]); // Espera um array vazio, que é o valor mockado
+    expect(sales).toEqual([]);
   });
 
-  it('should create a sale', async () => {
+  it('should create a new sale and update product stock', async () => {
+    // Clarify operation
     const saleData = {
       productId: 'product-id',
       quantity: 1,
       saleDate: new Date(),
     };
     const sale = await service.create(saleData);
+
+    // Assertions
     expect(sale).toHaveProperty('id');
-    expect(sale.totalValue).toBe(100); // Preço do produto mockado é 100
+    expect(sale.totalValue).toBe(100);
+    expect(prismaServiceMock.product.update).toHaveBeenCalledWith({
+      where: { id: 'product-id' },
+      data: { stock: 9 },
+    });
   });
 
   it('should delete a sale', async () => {
+    // Clarify operation
     const sale = await service.delete('1');
     expect(sale).toHaveProperty('id', '1');
   });
