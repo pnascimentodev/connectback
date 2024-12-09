@@ -38,6 +38,15 @@ export class ProductController {
     return this.productService.getAll(name);
   }
 
+  @Get(':id')
+  @ApiOperation({ summary: 'Get a product by ID' })
+  @ApiResponse({ status: 200, description: 'Product found' })
+  @ApiResponse({ status: 404, description: 'Product not found' })
+  @ApiParam({ name: 'id', type: String, description: 'Product ID' })
+  async getById(@Param('id') id: string) {
+    return this.productService.getById(id);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create a new product' })
   @ApiResponse({ status: 201, description: 'Product successfully created' })

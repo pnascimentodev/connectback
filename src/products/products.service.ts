@@ -12,6 +12,17 @@ export class ProductService {
     });
   }
 
+  async getById(id: string) {
+    const product = await this.prisma.product.findMany({
+      where: { id },
+      take: 1,
+    });
+    if (product.length === 0) {
+      throw new NotFoundException('Product not found');
+    }
+    return product[0];
+  }
+
   async create(data: CreateProductDto) {
     return this.prisma.product.create({ data });
   }
