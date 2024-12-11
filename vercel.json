@@ -1,0 +1,19 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "api/**/*.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/api/(.*)",
+        "dest": "/api/$1"
+      }
+    ],
+    "env": {
+      "DATABASE_URL": "mongodb+srv://pnascimento2912:reyJ3x0TQofnjxlJ@product-sales.uk6as.mongodb.net/productSales?retryWrites=true&w=majority&appName=product-sales"
+    }
+  }
+  
